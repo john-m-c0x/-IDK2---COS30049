@@ -8,8 +8,8 @@ import argparse
 import sys
 
 # Load datasets
-set1 = pd.read_csv('visualisation/datasets/cleaned_water_potability.xls')
-set2 = pd.read_csv('visualisation/datasets/cleaned_water_potability02.xls')
+set1 = pd.read_csv('datasets/cleaned_water_potability.xls')
+set2 = pd.read_csv('datasets/cleaned_water_potability02.xls')
 
 datasets = {
     'set1': set1,
