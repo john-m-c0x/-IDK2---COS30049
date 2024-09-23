@@ -1,6 +1,6 @@
 # Water Potability Visualization
 
-This project provides a set of visualizations for two cleaned water potability datasets using Plotly. It allows users to explore how various water quality features affect potability through different types of plots.
+This project provides a set of visualizations for two cleaned water potability datasets using Plotly. It allows users to explore how various water quality features affect potability through different types of plots. Designed for Assignment 2, this repository serves as the backend for the web product expeceted in Assignment 3.
 
 ## Datasets
 
