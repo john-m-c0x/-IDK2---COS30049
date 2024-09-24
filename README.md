@@ -34,7 +34,7 @@ To use script, run this command:
 `python script_name.py -d <dataset> -p <plot_type> -x <x_value> [-y <y_value>]`
 
 For example,
-`python script_name.py -d set1 -p scatter -x feature1 -y feature2`
+`python visualisation.py -d set1 -p box -x Potability -y Solids`
 
 You can also list datasets by using:
 `python script_name.py --list_datasets`
