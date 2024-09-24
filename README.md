@@ -42,3 +42,7 @@ You can also list datasets by using:
 ## Output
 The script generates an HTML file named visualization.html that contains the visual representation of the selected data.
 The following file is created in the local directory.
+
+## Notes
+- Box plots work when Potability/is_safe is considered as the x axis.
+- Histograms work better when Potability/is_safe is on the y axis
