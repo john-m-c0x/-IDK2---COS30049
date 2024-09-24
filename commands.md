@@ -1,5 +1,9 @@
 # List Available Datasets and Features
-python visualisation.py --list_datasets
+- `python visualisation.py --list_datasets`
+
+# Highest Regression Score
+- `python visualisation.py -d set2 --highest_regression`
+- `python visualisation.py -d set2 --highest_regression`
 
 # Run Regression Analysis on Dataset 1 (set1)
 - `python visualisation.py -d set1 -m regression -x ph -y Potability`
@@ -49,3 +53,4 @@ python visualisation.py --list_datasets
 - `python visualisation.py -d set2 -p scatter -x Hardness -y is_safe`
 - `python visualisation.py -d set2 -p box -x Conductivity -y is_safe`
 - `python visualisation.py -d set2 -p histogram -x Nitrates`
+****
