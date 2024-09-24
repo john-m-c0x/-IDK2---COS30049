@@ -11,16 +11,24 @@ import sys
 set1 = pd.read_csv('datasets/cleaned_water_potability.xls')
 set2 = pd.read_csv('datasets/cleaned_water_potability02.xls')
 
+# Dict for easy access in dynamic calls 
 datasets = {
     'set1': set1,
     'set2': set2
 }
 
-# Function to list available datasets and features
-def list_datasets_and_features():
-    print("Available datasets:")
-    for dataset_name in datasets.keys():
-        print(f"- {dataset_name}: Features - {datasets[dataset_name].columns.tolist()}\n")
+# Rewritten in columns for better readability 
+def list_datasets_and_features(column_width=3):
+    print("Available datasets: \n")
+    for dataset_name, dataset in datasets.items():
+        print(f"- {dataset_name}: Features (options for x or y values in chart):")
+        features = dataset.columns.tolist()
+
+        # Splits into column_width chunks
+        for i in range(0, len(features), column_width):
+            chunk = features[i:i + column_width]
+            print("    " + " | ".join(f"{feature}" for feature in chunk))
+        print()  # linebreak
 
 # Command Line Argument Parsing
 parser = argparse.ArgumentParser(description="Visualize water potability data.")
