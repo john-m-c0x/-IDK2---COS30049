@@ -31,13 +31,13 @@ To install dependencies, paste this into cmd:
 
 ## Usage 
 To use script, run this command:
-`python script_name.py -d <dataset> -p <plot_type> -x <x_value> [-y <y_value>]`
+`python visualisation.py -d <dataset> -p <plot_type> -x <x_value> [-y <y_value>]`
 
 For example,
 `python visualisation.py -d set1 -p box -x Potability -y Solids`
 
 You can also list datasets by using:
-`python script_name.py --list_datasets`
+`python visualisation.py --list_datasets`
 
 ## Output
 The script generates an HTML file named visualization.html that contains the visual representation of the selected data.
