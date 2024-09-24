@@ -7,9 +7,8 @@ import plotly.offline as pyo
 import argparse
 import sys
 from sklearn.linear_model import LinearRegression
-from sklearn.tree import DecisionTreeClassifier
 from sklearn.model_selection import train_test_split
-from sklearn.metrics import accuracy_score, mean_squared_error
+from sklearn.metrics import mean_squared_error
 import numpy as np
 
 # Load datasets
@@ -35,8 +34,31 @@ def list_datasets_and_features(column_width=3):
             print("    " + " | ".join(f"{feature}" for feature in chunk))
         print()  # linebreak
 
+# Function to find highest regression value
+def find_highest_regression(dataset, target_column):
+    max_mse = float('-inf')
+    best_feature = None
+
+    for feature in dataset.columns:
+        if feature != target_column:
+            X = dataset[[feature]]
+            y = dataset[target_column]
+            X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+            model = LinearRegression()
+            model.fit(X_train, y_train)
+            predictions = model.predict(X_test)
+
+            # Calculate MSE
+            mse = mean_squared_error(y_test, predictions)
+
+            if mse > max_mse:
+                max_mse = mse
+                best_feature = feature
+
+    print(f"Highest Regression MSE: {max_mse:.4f} for feature: {best_feature}")
+
 # Predictive modelling as per assignment spec (How other features: x, affect y:Potability )
-# Uses sklearn
 def run_regression_and_plot(dataset, x_value, y_value):
     X = dataset[[x_value]]
     y = dataset[y_value]
@@ -46,14 +68,14 @@ def run_regression_and_plot(dataset, x_value, y_value):
     model.fit(X_train, y_train)
     predictions = model.predict(X_test)
     
-    # Calculate MSE (SkLearn)
+    # Calculate MSE
     mse = mean_squared_error(y_test, predictions)
     print(f"Regression MSE for {x_value} vs {y_value}: {mse:.4f}")
 
     # Create scatter plot with regression line
     fig = px.scatter(dataset, x=x_value, y=y_value, color='Potability' if 'Potability' in dataset.columns else 'is_safe', title=f'{x_value} vs {y_value} with Regression Line')
 
-    # Add regression line to the plot, uses NumPy
+    # Add regression line to the plot
     X_range = np.linspace(X[x_value].min(), X[x_value].max(), 100).reshape(-1, 1)
     y_pred = model.predict(X_range)
     fig.add_scatter(x=X_range.flatten(), y=y_pred, mode='lines', name='Regression Line', line=dict(color='red'))
@@ -66,7 +88,6 @@ def run_classification_and_plot(dataset, x_value, y_value):
     y = dataset[y_value]
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
-    # SkLearn
     model = DecisionTreeClassifier()
     model.fit(X_train, y_train)
     predictions = model.predict(X_test)
@@ -90,7 +111,8 @@ parser.add_argument('-p', '--plot_type', choices=['scatter', 'box', 'histogram']
 parser.add_argument('-m', '--model_type', choices=['regression', 'classification'], required=False, help="Specify the type of model to run: regression or classification.")
 parser.add_argument('-x', '--x_value', required=False, help="Specify the x-axis value for the plot or model.")
 parser.add_argument('-y', '--y_value', help="Specify the y-axis value for the plot or model.")
-parser.add_argument('-ls','--list_datasets', action='store_true', help="List available datasets and their features.")
+parser.add_argument('-hr', '--highest_regression', action='store_true', help="Output the highest regression value across all features.")
+parser.add_argument('-ls', '--list_datasets', action='store_true', help="List available datasets and their features.")
 args = parser.parse_args()
 
 # If the user wants to list datasets and features
@@ -119,6 +141,11 @@ if args.y_value and args.y_value not in available_features:
     print(f"Error: '{args.y_value}' is not a valid column in the dataset '{args.dataset}'.")
     print(f"Available features: {available_features}")
     sys.exit(1)
+
+# If user wants to find the highest regression value
+if args.highest_regression:
+    target_column = 'Potability' if 'Potability' in dataset.columns else 'is_safe'
+    find_highest_regression(dataset, target_column)
 
 # Run specified model type and plot results
 if args.model_type == 'regression':
@@ -158,4 +185,5 @@ if args.plot_type:
         combined_file.write(pyo.plot(fig, include_plotlyjs='cdn', output_type='div'))
         combined_file.write('</body></html>')
 
-    print(f"Visualization has been saved to {output_file}.")
+    print(f"Visualization saved to {output_file}.")
+
