@@ -1,5 +1,5 @@
 ## Workflow for COS30049 Assignment2
-## Visualisation for 2 Cleaned Datasets (datasets/cleaned_water_potability.xls, datasets/cleaned_water_potability02.xls)
+## Visualisation for 3 Cleaned Datasets (datasets/cleaned_water_potability.xls, datasets/cleaned_water_potability02.xls, datasets/cleaned_water_potability03.xls)
 
 import pandas as pd
 import plotly.express as px
@@ -14,11 +14,13 @@ import numpy as np
 # Load datasets
 set1 = pd.read_csv('datasets/cleaned_water_potability.xls')
 set2 = pd.read_csv('datasets/cleaned_water_potability02.xls')
+set3 = pd.read_csv('datasets/cleaned_water_potability03.xls')  # New dataset added
 
 # Dict for easy access in dynamic calls 
 datasets = {
     'set1': set1,
-    'set2': set2
+    'set2': set2,
+    'set3': set3  # Added set3 to the dataset dictionary
 }
 
 # Adjusted for better readability
@@ -73,7 +75,13 @@ def run_regression_and_plot(dataset, x_value, y_value):
     print(f"Regression MSE for {x_value} vs {y_value}: {mse:.4f}")
 
     # Create scatter plot with regression line
-    fig = px.scatter(dataset, x=x_value, y=y_value, color='Potability' if 'Potability' in dataset.columns else 'is_safe', title=f'{x_value} vs {y_value} with Regression Line')
+    color_column = 'Potability' if 'Potability' in dataset.columns else 'is_safe' if 'is_safe' in dataset.columns else 'Totalcaliform' if 'Totalcaliform' in dataset.columns else None
+    
+    # Check if color_column is valid
+    if color_column:
+        fig = px.scatter(dataset, x=x_value, y=y_value, color=color_column, title=f'{x_value} vs {y_value} with Regression Line')
+    else:
+        fig = px.scatter(dataset, x=x_value, y=y_value, title=f'{x_value} vs {y_value} with Regression Line')
 
     # Add regression line to the plot
     X_range = np.linspace(X[x_value].min(), X[x_value].max(), 100).reshape(-1, 1)
@@ -81,6 +89,7 @@ def run_regression_and_plot(dataset, x_value, y_value):
     fig.add_scatter(x=X_range.flatten(), y=y_pred, mode='lines', name='Regression Line', line=dict(color='red'))
 
     pyo.plot(fig, filename='regression_visualization.html')
+
 
 # Classification 
 def run_classification_and_plot(dataset, x_value, y_value):
@@ -106,7 +115,7 @@ def run_classification_and_plot(dataset, x_value, y_value):
 
 # Command Line Argument Parsing
 parser = argparse.ArgumentParser(description="Visualize and model water potability data.")
-parser.add_argument('-d', '--dataset', choices=list(datasets.keys()), required=False, help="Specify the dataset to use: set1 or set2.")
+parser.add_argument('-d', '--dataset', choices=list(datasets.keys()), required=False, help="Specify the dataset to use: set1, set2, or set3.")
 parser.add_argument('-p', '--plot_type', choices=['scatter', 'box', 'histogram'], required=False, help="Specify the type of plot to create: scatter, box, or histogram.")
 parser.add_argument('-m', '--model_type', choices=['regression', 'classification'], required=False, help="Specify the type of model to run: regression or classification.")
 parser.add_argument('-x', '--x_value', required=False, help="Specify the x-axis value for the plot or model.")
@@ -171,19 +180,21 @@ if args.plot_type:
             if not args.y_value:
                 print("Error: A y-value must be specified for scatter plots.")
                 sys.exit(1)
-            fig = px.scatter(dataset, x=args.x_value, y=args.y_value, color='Potability' if args.dataset == 'set1' else 'is_safe', title=f'{args.x_value} vs {args.y_value}')
+            fig = px.scatter(dataset, x=args.x_value, y=args.y_value, color='Potability' if args.dataset in ['set1', 'set3'] else 'is_safe', title=f'{args.x_value} vs {args.y_value}')
 
         elif args.plot_type == 'box':
             if not args.y_value:
                 print("Error: A y-value must be specified for box plots.")
                 sys.exit(1)
-            fig = px.box(dataset, x=args.x_value, y=args.y_value, color='Potability' if args.dataset == 'set1' else 'is_safe', title=f'{args.y_value} Distribution by {args.x_value}')
+            fig = px.box(dataset, x=args.x_value, y=args.y_value, color='Potability' if args.dataset in ['set1', 'set3'] else 'is_safe', title=f'{args.y_value} Distribution by {args.x_value}')
 
         elif args.plot_type == 'histogram':
-            fig = px.histogram(dataset, x=args.x_value, color='is_safe' if args.dataset == 'set2' else 'Potability', barmode='overlay', title=f'{args.x_value} Distribution')
+            fig = px.histogram(dataset, x=args.x_value, color='is_safe' if args.dataset == 'set2' else 'Potability', barmode='overlay', title=f'Histogram of {args.x_value}')
 
-        combined_file.write(pyo.plot(fig, include_plotlyjs='cdn', output_type='div'))
+        # Save each plot into the combined HTML file
+        fig.write_html(output_file, include_plotlyjs='cdn')
+        combined_file.write(f'<iframe src="{output_file}" width="100%" height="600"></iframe>\n')
+        
         combined_file.write('</body></html>')
 
-    print(f"Visualization saved to {output_file}.")
-
+print("Visualization and modeling completed.")
