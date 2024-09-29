@@ -53,4 +53,16 @@
 - `python visualisation.py -d set2 -p scatter -x Hardness -y is_safe`
 - `python visualisation.py -d set2 -p box -x Conductivity -y is_safe`
 - `python visualisation.py -d set2 -p histogram -x Nitrates`
-****
+
+# Run Regression Analysis on Dataset 3 (set3)
+- `python visualisation.py -d set3 -m regression -x Temperature -y Totalcaliform`
+- `python visualisation.py -d set3 -m regression -x D.O -y Totalcaliform`
+- `python visualisation.py -d set3 -m regression -x pH -y Totalcaliform`
+- `python visualisation.py -d set3 -m regression -x Conductivity -y Totalcaliform`
+- `python visualisation.py -d set3 -m regression -x B.O.D -y Totalcaliform`
+- `python visualisation.py -d set3 -m regression -x Nitrate -y Totalcaliform`
+- `python visualisation.py -d set3 -m regression -x Fecalcaliform -y Totalcaliform`
+
+# Run Classification Analysis on Dataset 3 (set3)
+- `python visualisation.py -d set3 -m classification -x [Your_Classification_Variable] -y Totalcaliform` 
+
